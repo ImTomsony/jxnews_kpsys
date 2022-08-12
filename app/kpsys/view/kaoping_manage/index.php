@@ -21,8 +21,9 @@
 		</div>
 
 		<!-- 整体思路就是先同过tp6模板的volist遍历打印出真个表格。再通过layui将静态表格转换为动态表格 -->
+		
+		<!-- 这里是layui模板, 用于表格的toolbar, 文档: https://www.layui.site/demo/table/toolbar.html -->
 		<script type="text/html" id="toolbar">
-			<!-- 这里是layui模板, 用于表格的toolbar, 文档: https://www.layui.site/demo/table/toolbar.html -->
 			<div class="layui-btn-container">
 				<button class="layui-btn layui-btn-xs" onclick="add()">
 					<i class="layui-icon layui-icon-add-1"></i>增
@@ -69,7 +70,6 @@
 				{/volist}
 			</tbody>
 		</table>
-		<table id="demo" lay-filter="test"></table>
 	</body>
 </html>
 
