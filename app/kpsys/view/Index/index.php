@@ -73,7 +73,7 @@
 										<i class="layui-icon layui-icons layui-icon-list"></i>所有部门人员
 									</a>
 								</dd>
-								<dd data-name="" data-jump="/">
+								<!-- <dd data-name="" data-jump="/">
 									<a href="javascript:;" onclick="menuFire('')">
 										<i class="layui-icon layui-icons layui-icon-list"></i>查看当月考评
 									</a>
@@ -82,7 +82,7 @@
 									<a href="javascript:;" onclick="menuFire('')">
 										<i class="layui-icon layui-icons layui-icon-date"></i>历史考评查询
 									</a>
-								</dd>
+								</dd> -->
 							</dl>
 						</li>
 						<li data-name="" data-jump="" class="layui-nav-item">

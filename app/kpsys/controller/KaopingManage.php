@@ -125,8 +125,8 @@ class KaopingManage extends Base{
      * 查看某人的所有的考评的接口
      * @return json 返回json格式的数据
      */
-    public function findAllKaoping($mid){
-        $result = rizhi2013x::where('mid', $mid)->select();
-        return json($result);
-    }
+    // public function findAllKaoping($mid){
+
+    //     return json($list);
+    // }
 }

@@ -13,40 +13,39 @@
 
 <body >
     <!-- 首先需要打印出所有的部门 -->
-    <div class="layui-container">
-    {volist name="departmentList" id="dept" key="k"}
-        <div div>
-            <div class="" style="padding:10px; width: 240px">
-                <div class="header">
-                    <span>{$dept.deptname}</span>
-                    <div></div>
-                </div>
-                <!-- 然后把部门下的所有员工打印出来 -->
-                <table class="layui-table" lay-size="sm" lay-filter="demo">
-                    <thead>
-                        <tr>
-                            <th lay-data="{field:'k', sort:true, width:70, align:'center'}">序号</th>
-                            <th lay-data="{field:'time', sort:true, width:70, align:'center'}">姓名</th>
-                            <th lay-data="{field:'operation', sort:true, width:70, align:'center'}">操作</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {volist name='$dept.memberList' id='member' key='kk'}
+    <div class="layui-fluid">
+        <div class="layui-row">
+            {volist name="departmentList" id="dept" key="k"}
+                <div class="layui-col-xs1" style="width: 231px; margin: 5px">
+                    <fieldset class="layui-elem-field layui-field-title">
+                        <legend>{$dept.deptname}</legend>
+                    </fieldset>
+                    <!-- 然后把部门下的所有员工打印出来 -->
+                    <table class="layui-table" lay-size="sm" lay-filter="demo">
+                        <thead>
                             <tr>
-                                <td>{$kk}</td>
-                                <td>{$member.username}</td>
-                                <td>
-                                    <button class="layui-btn layui-btn-xs layui-bg-black" onclick="search()">
-                                        <i class="layui-icon layui-icon-search "></i>查
-                                    </button>
-                                </td>
+                                <th lay-data="{field:'k', sort:true, width:70, align:'center'}">序号</th>
+                                <th lay-data="{field:'time', sort:true, minWidth:70, align:'center'}">姓名</th>
+                                <th lay-data="{field:'operation', sort:true, width:70, align:'center'}">操作</th>
                             </tr>
-                        {/volist}
-                    </tbody>
-                </table>
-            </div>
+                        </thead>
+                        <tbody>
+                            {volist name='$dept.memberList' id='member' key='kk'}
+                                <tr>
+                                    <td>{$kk}</td>
+                                    <td>{$member.username}</td>
+                                    <td>
+                                        <button class="layui-btn layui-btn-xs layui-bg-cyan" onclick="search('{$member.id}')">
+                                            <i class="layui-icon layui-icon-search "></i>查
+                                        </button>
+                                    </td>
+                                </tr>
+                            {/volist}
+                        </tbody>
+                    </table>
+                </div>
+            {/volist}
         </div>
-    {/volist}
     </div>
 </body>
 
@@ -64,6 +63,17 @@
 	layui.use('table', function(){
 		var table = layui.table;
 		table.init('demo', {
+            height: 340,
+            limit: 100000
 		});
 	})
+
+    function search(mid){
+        var zIndex = layer.open({
+            type: 2,
+            content: `/index.php/kpsys/DepartmentMember/memberKaoping/mid/${mid}`,
+            maxmin: true,
+        });
+        layer.full(zIndex);
+    }
 </script>
