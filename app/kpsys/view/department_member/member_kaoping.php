@@ -42,7 +42,7 @@
                     <td>{$vo.score}</td>
                     <td>{$vo.reward}</td>
                     <td>{$vo.note}</td>
-                    {if $vo.tag == 0}
+                    <!-- {if $vo.tag == 0}
                     <td>
                         <button type="button" class="layui-btn layui-btn-xs layui-btn-normal" onclick="update('{$vo.id}')">
                             <i class="layui-icon layui-icon-edit"></i>改
@@ -51,7 +51,7 @@
                             <i class="layui-icon layui-icon-delete"></i>删
                         </button>
                     </td>
-                    {/if}
+                    {/if} -->
                 </tr>
             {/volist}
         </tbody>
@@ -68,7 +68,8 @@
 			limit: 20,
 			limits: [10,20,50,100,500,1000,100000000],
 			page: true,
-			toolbar: '#toolbar'
+			toolbar: '#toolbar',
+            even: true,
         })
     })
 </script>

@@ -53,6 +53,7 @@ class Login{
                     // 登录成功还需要保存用户的 id 和 username 到Session，以备之后操作
                     Session::set('user_id', $user['id']);
                     Session::set('user_name', $user['username']);
+                    Session::set('userDept_id', $user['department']);
                   
                     echo json_encode(['msg' => '登录成功', 'code' => 0]);
                     return;
@@ -79,6 +80,7 @@ class Login{
     public function logout(){
         Session::delete('user_id');
         Session::delete('user_name');
+        Session::delete('userDept_id');
 
         echo json_encode(['msg' => '登出成功', 'code' => 0]);
     }
@@ -89,6 +91,7 @@ class Login{
     public function timeout(){
         Session::delete('user_id');
         Session::delete('user_name');
+        Session::delete('userDept_id');
 
         return View::fetch();
     }

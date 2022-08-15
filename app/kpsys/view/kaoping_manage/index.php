@@ -88,7 +88,8 @@
 			limit: 20,
 			limits: [10,20,50,100,500,1000,100000000],
 			page: true,
-			toolbar: '#toolbar'
+			toolbar: '#toolbar',
+			even: true,
 		});
 	})
 

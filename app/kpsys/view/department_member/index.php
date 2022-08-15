@@ -16,7 +16,8 @@
     <div class="layui-fluid">
         <div class="layui-row">
             {volist name="departmentList" id="dept" key="k"}
-                <div class="layui-col-xs1" style="width: 231px; margin: 5px">
+                <!-- 在下面的div中的style属性嵌套php代码，实现user所在部门的边框为solid -->
+                <div class="layui-col-xs1" style="width: 235px; margin: 5px; <?php if($dept['deptid'] == app('request')->session('userDept_id')) echo 'border: 2px solid'; ?>">
                     <fieldset class="layui-elem-field layui-field-title">
                         <legend>{$dept.deptname}</legend>
                     </fieldset>
@@ -35,7 +36,7 @@
                                     <td>{$kk}</td>
                                     <td>{$member.username}</td>
                                     <td>
-                                        <button class="layui-btn layui-btn-xs layui-bg-cyan" onclick="search('{$member.id}')">
+                                        <button class="layui-btn layui-btn-xs <?php if($member['id'] == app('request')->session('user_id')) {echo 'layui-bg-red';} else {echo 'layui-bg-cyan';} ?>" onclick="search('{$member.id}')">
                                             <i class="layui-icon layui-icon-search "></i>查
                                         </button>
                                     </td>
@@ -64,7 +65,8 @@
 		var table = layui.table;
 		table.init('demo', {
             height: 340,
-            limit: 100000
+            limit: 100000,
+            even: true,
 		});
 	})
 
@@ -73,7 +75,8 @@
             type: 2,
             content: `/index.php/kpsys/DepartmentMember/memberKaoping/mid/${mid}`,
             maxmin: true,
+            area: ['1240px', '810px']
         });
-        layer.full(zIndex);
+        // layer.full(zIndex);
     }
 </script>
