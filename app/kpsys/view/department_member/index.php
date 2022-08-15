@@ -75,8 +75,7 @@
             type: 2,
             content: `/index.php/kpsys/DepartmentMember/memberKaoping/mid/${mid}`,
             maxmin: true,
-            area: ['1240px', '810px']
         });
-        // layer.full(zIndex);
+        layer.full(zIndex);
     }
 </script>

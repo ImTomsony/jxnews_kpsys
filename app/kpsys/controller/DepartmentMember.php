@@ -4,6 +4,7 @@ namespace app\kpsys\controller;
 use app\kpsys\model\rizhi2013_admin;
 use app\kpsys\model\rizhi2013_dept;
 use app\kpsys\model\rizhi2013x;
+use think\facade\Session;
 use think\facade\View;
 
 class DepartmentMember extends Base{
@@ -38,7 +39,18 @@ class DepartmentMember extends Base{
         return View::fetch();
     }
 
+    /**
+     * 根据传过来的员工id查询所有的考评
+     * @param $mid 根据传过来的员工id
+     * @return View 返回的页面，查看的mid正是自己的，就返回本人的页面(本人的页面有增删改查功能，他人的页面只有查看功能)
+     */
     public function memberKaoping($mid){
+        if($mid == Session::get('user_id')){
+            $list = rizhi2013x::where('mid', $mid)->order('time', 'desc')->order('id','desc')->select()->toArray();
+            View::assign(['list'=>$list]);
+            return View::fetch('kaoping_manage/index');
+        }
+
         $list = rizhi2013x::where('mid', $mid)->order('time', 'desc')->order('id','desc')->select()->toArray();
         View::assign(['list'=>$list]);
         return View::fetch();
