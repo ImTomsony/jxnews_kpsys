@@ -17,15 +17,11 @@
         <div class="layui-row">
             {volist name="departmentList" id="dept" key="k"}
                 <!-- 自己所在部门有特殊互动 -->
-                {if $dept.id == Request.session.userDept_id}
+                {if $dept.deptid == $user.department}
                 <div class="layui-col-xs1" style="width: 235px; height: 410px; margin: 5px; border: 2px solid;">
                     <!-- 自己所在的部门，如果权限是可以打分，就把标题改变成按钮，点进去就是打分部门的打分列表 -->
                     <fieldset class="layui-elem-field layui-field-title">
-                        <legend>
-                            <?php if($user['type'] == 2) echo '<button onclick="deptBaosong()">'; ?>
-                                {$dept.deptname}
-                            <?php if($user['type'] == 2) echo '<i class="layui-icon layui-icon-search "></i></button>'; ?>
-                        </legend>
+                        <legend>{$dept.deptname}</legend>
                     </fieldset>
 
                     <!-- 然后把部门下的所有员工打印出来 -->
@@ -44,9 +40,15 @@
                                     <td>{$member.username}</td>
                                     <td>
                                         <!-- 用户自己的查询按钮不一样 -->
-                                        <button class="layui-btn layui-btn-xs <?php if($member['id'] == app('request')->session('user_id')) {echo 'layui-bg-red';} else {echo 'layui-bg-cyan';} ?>" onclick="search('{$member.id}')">
-                                            <i class="layui-icon layui-icon-search "></i>查
-                                        </button>
+                                        {if $member.id == $user.id}
+                                            <button class="layui-btn layui-btn-xs layui-bg-red" onclick="searchMyself()">
+                                                <i class="layui-icon layui-icon-search "></i>查
+                                            </button>
+                                        {else/}
+                                            <button class="layui-btn layui-btn-xs layui-bg-cyan" onclick="search('{$member.id}')">
+                                                <i class="layui-icon layui-icon-search "></i>查
+                                            </button>
+                                        {/if}
                                     </td>
                                 </tr>
                             {/volist}
@@ -117,6 +119,18 @@
         var zIndex = layer.open({
             type: 2,
             content: `/index.php/kpsys/DepartmentMember/memberKaoping/mid/${mid}`,
+            maxmin: true,
+        });
+        layer.full(zIndex);
+    }
+
+    /**
+     * 用户自己点击自己的查询按钮
+     */
+    function searchMyself(){
+        var zIndex = layer.open({
+            type: 2,
+            content: `/index.php/kpsys/KaopingManage/index`,
             maxmin: true,
         });
         layer.full(zIndex);

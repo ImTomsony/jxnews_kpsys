@@ -13,11 +13,6 @@
 
 <body>
     <script type="text/html" id="toolbar">
-        <!-- <div class="layui-btn-container">
-            <button class="layui-btn layui-btn-xs" onclick="baosong()">
-                <i class="layui-icon layui-icon-add-1"></i>报送
-            </button>
-        </div> -->
     </script>
     <table id="demo" lay-filter="test" lay-size="sm">
         <thead>
@@ -29,7 +24,6 @@
                 <th lay-data="{field:'score', sort:true, width:69, align:'center'}">分值</th>
                 <th lay-data="{field:'reward', sort:true, width:69, align:'center'}">奖惩</th>
                 <th lay-data="{field:'reward_note', sort:true, width:93}">打分备注</th>
-                <!-- <th lay-data="{field:'operation', sort:true, width:130, align:'center'}">操作</th> -->
             </tr>
         </thead>
         <tbody>
@@ -42,16 +36,6 @@
                     <td>{$vo.score}</td>
                     <td>{$vo.reward}</td>
                     <td>{$vo.note}</td>
-                    <!-- {if $vo.tag == 0}
-                    <td>
-                        <button type="button" class="layui-btn layui-btn-xs layui-btn-normal" onclick="update('{$vo.id}')">
-                            <i class="layui-icon layui-icon-edit"></i>改
-                        </button>
-                        <button type="button" class="layui-btn layui-btn-xs layui-btn-danger" onclick="del('{$vo.id}')">
-                            <i class="layui-icon layui-icon-delete"></i>删
-                        </button>
-                    </td>
-                    {/if} -->
                 </tr>
             {/volist}
         </tbody>

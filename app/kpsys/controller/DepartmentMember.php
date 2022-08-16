@@ -6,6 +6,8 @@ use app\kpsys\model\rizhi2013_dept;
 use app\kpsys\model\rizhi2013x;
 use think\facade\Session;
 use think\facade\View;
+use think\exception\ValidateException;
+use app\kpsys\validate\AddKaoping as AddKaopingValidate;
 
 class DepartmentMember extends Base{
     public function index(){
@@ -36,7 +38,21 @@ class DepartmentMember extends Base{
         View::assign([
             'departmentList' => $departmentList
         ]);
-        return View::fetch();
+
+        // 要根据用户权限来分配不同的页面。(实践证明再这里搞，比在前端用php搞好多了)
+        switch (Session::get('user_type')) {
+            case 1:
+                return View::fetch('index');
+                break;
+
+            case 2:
+                return View::fetch('index_type2');
+                break;
+            
+            default:
+                return View::fetch('index');
+                break;
+        }
     }
 
     /**
@@ -51,35 +67,66 @@ class DepartmentMember extends Base{
     }
 
     /**
-     * 查看用户自己所在部门员工你的考评
-     * @param $mid 根据传过来的员工id
+     * 打分人 (type 2) 查看自己所在部门员工的考评
+     * @param $mid 员工id
      * @return View 返回的页面，如果是自己的就返回可以增删改的界面，如果是其他人的就再根据用户个人的权限进行选择
      */
-    public function userDepartmentKaoping($mid){
-        if($mid == Session::get('user_id')){
-            $list = rizhi2013x::where('mid', $mid)->order('time', 'desc')->order('id','desc')->select()->toArray();
-            View::assign(['list'=>$list]);
-            return View::fetch('kaoping_manage/index');
-        }
+    public function MyDeptMemberKaoping($mid){
+        $list = rizhi2013x::where('mid', $mid)->order('time', 'desc')->order('id','desc')->select()->toArray();
+        $member = rizhi2013_admin::where('id', $mid)->find();
+        View::assign([
+            'list' => $list,
+            'member' => $member
+        ]);
+        return View::fetch();
+    }
 
-        switch (Session::get('user_type')) {
-            case 1:
-                # code...
-                break;
+    /**
+     * 展示打分者添加部门员工考评的界面
+     */
+    public function addMemberKaoping($mid){
+        $member = rizhi2013_admin::where('id', $mid)->find();
+        View::assign([
+            'member' => $member
+        ]);
+        return View::fetch();
+    }
 
-            case 2:
-                break;
+    /**
+     * post过来的考评信息
+     */
+    public function addMemberKaopingFormPost(){
+            // 通过input助手函数和time()函数获取需要的数据
+            $data = [
+                'time' => input('post.time'),
+                'content' => remove_xss(trim(input('post.content'))),
+                'beizhu' => remove_xss(trim(input('post.beizhu'))),
+                'mid' => input('post.mid'),
+                'did' => input('post.did'),
+                'uname' => input('post.uname'),
+                'addtime' => time(),
+                'score' => input('post.score'),
+                'reward' => input('post.reward'),
+                'total' => input('post.score') + input('post.reward'),
+                'note' => remove_xss(trim(input('post.note'))),
+            ];
 
-            case 6:
-                break;
+            // 通过验证器验证数据是否合法
+            try{
+                validate(AddKaopingValidate::class)->check($data);
+            }catch(ValidateException $e){
+                // 验证失败就返回错误信息和错误代码
+                return json([ 'msg' => $e->getError(), 'code' => 1 ]);
+                exit;
+            };
+    
+            // 添加考评
+            if(empty(rizhi2013x::insert($data))){
+                return json(['code'=>1, 'msg'=>'数据验证成功, 但是无法添加到数据库中']);
+                exit;
+            }
 
-            case 8:
-                break;
-            
-            default:
-                DepartmentMember::memberKaoping($mid);
-                break;
-        }
+            return json(['code'=>0, 'msg'=>'ok']);
     }
 
     public function departmentBaosong($did){
