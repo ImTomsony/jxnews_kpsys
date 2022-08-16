@@ -16,11 +16,18 @@
     <div class="layui-fluid">
         <div class="layui-row">
             {volist name="departmentList" id="dept" key="k"}
-                <!-- 在下面的div中的style属性嵌套php代码，实现user所在部门的边框为solid -->
-                <div class="layui-col-xs1" style="width: 235px; margin: 5px; <?php if($dept['deptid'] == app('request')->session('userDept_id')) echo 'border: 2px solid'; ?>">
+                <!-- 自己所在部门有特殊互动 -->
+                {if $dept.id == Request.session.userDept_id}
+                <div class="layui-col-xs1" style="width: 235px; height: 410px; margin: 5px; border: 2px solid;">
+                    <!-- 自己所在的部门，如果权限是可以打分，就把标题改变成按钮，点进去就是打分部门的打分列表 -->
                     <fieldset class="layui-elem-field layui-field-title">
-                        <legend>{$dept.deptname}</legend>
+                        <legend>
+                            <?php if($user['type'] == 2) echo '<button onclick="deptBaosong()">'; ?>
+                                {$dept.deptname}
+                            <?php if($user['type'] == 2) echo '<i class="layui-icon layui-icon-search "></i></button>'; ?>
+                        </legend>
                     </fieldset>
+
                     <!-- 然后把部门下的所有员工打印出来 -->
                     <table class="layui-table" lay-size="sm" lay-filter="demo">
                         <thead>
@@ -36,7 +43,40 @@
                                     <td>{$kk}</td>
                                     <td>{$member.username}</td>
                                     <td>
+                                        <!-- 用户自己的查询按钮不一样 -->
                                         <button class="layui-btn layui-btn-xs <?php if($member['id'] == app('request')->session('user_id')) {echo 'layui-bg-red';} else {echo 'layui-bg-cyan';} ?>" onclick="search('{$member.id}')">
+                                            <i class="layui-icon layui-icon-search "></i>查
+                                        </button>
+                                    </td>
+                                </tr>
+                            {/volist}
+                        </tbody>
+                    </table>
+                </div>
+                {/if}
+
+                <div class="layui-col-xs1" style="width: 235px; height: 410px; margin: 5px;">
+                    <!-- 部门 -->
+                    <fieldset class="layui-elem-field layui-field-title">
+                        <legend>{$dept.deptname}</legend>
+                    </fieldset>
+
+                    <!-- 然后把部门下的所有员工打印出来 -->
+                    <table class="layui-table" lay-size="sm" lay-filter="demo">
+                        <thead>
+                            <tr>
+                                <th lay-data="{field:'k', sort:true, width:70, align:'center'}">序号</th>
+                                <th lay-data="{field:'time', sort:true, minWidth:70, align:'center'}">姓名</th>
+                                <th lay-data="{field:'operation', sort:true, width:70, align:'center'}">操作</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {volist name='$dept.memberList' id='member' key='kk'}
+                                <tr>
+                                    <td>{$kk}</td>
+                                    <td>{$member.username}</td>
+                                    <td>
+                                        <button class="layui-btn layui-btn-xs layui-bg-cyan" onclick="search('{$member.id}')">
                                             <i class="layui-icon layui-icon-search "></i>查
                                         </button>
                                     </td>
@@ -70,10 +110,25 @@
 		});
 	})
 
+    /**
+     * 员工查询按钮点击事件
+     */
     function search(mid){
         var zIndex = layer.open({
             type: 2,
             content: `/index.php/kpsys/DepartmentMember/memberKaoping/mid/${mid}`,
+            maxmin: true,
+        });
+        layer.full(zIndex);
+    }
+
+    /**
+     * 部门按钮点击，开启部门打分报送页面
+     */
+    function deptBaosong(){
+        var zIndex = layer.open({
+            type: 2,
+            content: '/index.php/kpsys/DepartmentMember/departmentBaosong/did/<?php echo $user['department'] ?>',
             maxmin: true,
         });
         layer.full(zIndex);

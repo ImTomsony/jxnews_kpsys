@@ -13,11 +13,11 @@
 
 <body>
     <script type="text/html" id="toolbar">
-        <div class="layui-btn-container">
+        <!-- <div class="layui-btn-container">
             <button class="layui-btn layui-btn-xs" onclick="baosong()">
                 <i class="layui-icon layui-icon-add-1"></i>报送
             </button>
-        </div>
+        </div> -->
     </script>
     <table id="demo" lay-filter="test" lay-size="sm">
         <thead>
@@ -25,11 +25,11 @@
                 <th lay-data="{field:'k', sort:true, width:69, align:'center'}">序号</th>
                 <th lay-data="{field:'time', sort:true, width:92}">日期</th>
                 <th lay-data="{field:'content', sort:true, minWidth:500}">工作内容</th>
-                <th lay-data="{field:'beizhu', sort:true, width:150}">补充内容</th>
+                <th lay-data="{field:'beizhu', sort:true, width:93}">补充内容</th>
                 <th lay-data="{field:'score', sort:true, width:69, align:'center'}">分值</th>
                 <th lay-data="{field:'reward', sort:true, width:69, align:'center'}">奖惩</th>
-                <th lay-data="{field:'reward_note', sort:true, width:150}">打分备注</th>
-                <th lay-data="{field:'operation', sort:true, width:130, align:'center'}">操作</th>
+                <th lay-data="{field:'reward_note', sort:true, width:93}">打分备注</th>
+                <!-- <th lay-data="{field:'operation', sort:true, width:130, align:'center'}">操作</th> -->
             </tr>
         </thead>
         <tbody>

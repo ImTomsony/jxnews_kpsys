@@ -54,6 +54,7 @@ class Login{
                     Session::set('user_id', $user['id']);
                     Session::set('user_name', $user['username']);
                     Session::set('userDept_id', $user['department']);
+                    Session::set('user_Tyep', $user['type']);
                   
                     echo json_encode(['msg' => '登录成功', 'code' => 0]);
                     return;

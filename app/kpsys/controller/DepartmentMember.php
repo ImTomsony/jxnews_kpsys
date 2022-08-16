@@ -42,17 +42,47 @@ class DepartmentMember extends Base{
     /**
      * 根据传过来的员工id查询所有的考评
      * @param $mid 根据传过来的员工id
-     * @return View 返回的页面，查看的mid正是自己的，就返回本人的页面(本人的页面有增删改查功能，他人的页面只有查看功能)
+     * @return View 返回的页面，无增删改查功能，只能看
      */
     public function memberKaoping($mid){
+        $list = rizhi2013x::where('mid', $mid)->order('time', 'desc')->order('id','desc')->select()->toArray();
+        View::assign(['list'=>$list]);
+        return View::fetch();
+    }
+
+    /**
+     * 查看用户自己所在部门员工你的考评
+     * @param $mid 根据传过来的员工id
+     * @return View 返回的页面，如果是自己的就返回可以增删改的界面，如果是其他人的就再根据用户个人的权限进行选择
+     */
+    public function userDepartmentKaoping($mid){
         if($mid == Session::get('user_id')){
             $list = rizhi2013x::where('mid', $mid)->order('time', 'desc')->order('id','desc')->select()->toArray();
             View::assign(['list'=>$list]);
             return View::fetch('kaoping_manage/index');
         }
 
-        $list = rizhi2013x::where('mid', $mid)->order('time', 'desc')->order('id','desc')->select()->toArray();
-        View::assign(['list'=>$list]);
+        switch (Session::get('user_type')) {
+            case 1:
+                # code...
+                break;
+
+            case 2:
+                break;
+
+            case 6:
+                break;
+
+            case 8:
+                break;
+            
+            default:
+                DepartmentMember::memberKaoping($mid);
+                break;
+        }
+    }
+
+    public function departmentBaosong($did){
         return View::fetch();
     }
 }
