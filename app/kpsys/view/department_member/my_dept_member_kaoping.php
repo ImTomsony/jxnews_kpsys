@@ -67,7 +67,7 @@
                     {else/}
                         {if strtotime($vo.time) >= $lastWeek}
                             <td>
-                                <button class="layui-btn layui-btn-xs laui-bg-blue">打分</button>
+                                <button class="layui-btn layui-btn-xs laui-bg-blue" onclick="grade('{$vo.id}')">打分</button>
                                 <button class="layui-btn layui-btn-xs layui-bg-red">报送</button>
                             </td>
                         {else/}
@@ -109,4 +109,16 @@
 			content: '/index.php/kpsys/DepartmentMember/addMemberKaoping/mid/{$member.id}'
 		})
 	}
+
+    /**
+     * 给已有考评打分 类似于怎删改查之改
+     */
+    function grade(kaopingId){
+        layer.open({
+			type:2,
+			title:"{$member.username}的考评",
+			area: ['700px', '580px'],
+			content: `/index.php/kpsys/DepartmentMember/gradeMemberKaoping/kaopingId/${kaopingId}`
+		})
+    }
 </script>

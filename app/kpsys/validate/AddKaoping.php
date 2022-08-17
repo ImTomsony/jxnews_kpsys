@@ -12,7 +12,11 @@ class AddKaoping extends Validate{
         'mid|(mid)用户id' => 'require',
         'did|(did)部门id' => 'require',
         'uname|(uname)用户名' => 'require|max:20',
-        'addtime|(addtime)日志添加时间戳' => 'require'
+        'addtime|(addtime)日志添加时间戳' => 'require',
+
+        'score' => 'float|max:6',
+        'reward' => 'float|max:6',
+        'note' => 'max:1600',
     ];
 
     // 错误信息

@@ -8,6 +8,7 @@ use think\facade\Session;
 use think\facade\View;
 use think\exception\ValidateException;
 use app\kpsys\validate\AddKaoping as AddKaopingValidate;
+use app\kpsys\validate\GradeKaoping as GradeKaopingValidate;
 
 class DepartmentMember extends Base{
     public function index(){
@@ -61,7 +62,7 @@ class DepartmentMember extends Base{
      * @return View 返回的页面，无增删改查功能，只能看
      */
     public function memberKaoping($mid){
-        $list = rizhi2013x::where('mid', $mid)->order('time', 'desc')->order('id','desc')->select()->toArray();
+        $list = rizhi2013x::where('mid', $mid)->order('time', 'desc')->order('id','desc')->limit(100)->select()->toArray();
         View::assign(['list'=>$list]);
         return View::fetch();
     }
@@ -72,7 +73,7 @@ class DepartmentMember extends Base{
      * @return View 返回的页面，如果是自己的就返回可以增删改的界面，如果是其他人的就再根据用户个人的权限进行选择
      */
     public function MyDeptMemberKaoping($mid){
-        $list = rizhi2013x::where('mid', $mid)->order('time', 'desc')->order('id','desc')->select()->toArray();
+        $list = rizhi2013x::where('mid', $mid)->order('time', 'desc')->order('id','desc')->limit(100)->select()->toArray();
         $member = rizhi2013_admin::where('id', $mid)->find();
         View::assign([
             'list' => $list,
@@ -93,7 +94,16 @@ class DepartmentMember extends Base{
     }
 
     /**
-     * post过来的考评信息
+     * 展示给已有考评打分的界面
+     */
+    public function gradeMemberKaoping($kaopingId){
+        $kaoping = rizhi2013x::where('id', $kaopingId)->find();
+        View::assign(['kaoping' => $kaoping]);
+        return View::fetch();
+    }
+
+    /**
+     * 接受post过来的考评信息，并且insert到数据库
      */
     public function addMemberKaopingFormPost(){
             // 通过input助手函数和time()函数获取需要的数据
@@ -127,6 +137,34 @@ class DepartmentMember extends Base{
             }
 
             return json(['code'=>0, 'msg'=>'ok']);
+    }
+
+    public function gradeMemberKaopingFormPost(){
+         // 通过input助手函数和time()函数获取需要的数据
+         $id = input('post.id');
+         $data = [
+            'score' => input('post.score'),
+            'reward' => input('post.reward'),
+            'total' => input('post.score') + input('post.reward'),
+            'note' => remove_xss(trim(input('post.note'))),
+        ];
+
+        // 通过验证器验证数据是否合法
+        try{
+            validate(GradeKaopingValidate::class)->check($data);
+        }catch(ValidateException $e){
+            // 验证失败就返回错误信息和错误代码
+            return json([ 'msg' => $e->getError(), 'code' => 1 ]);
+            exit;
+        };
+
+        // 更新考评
+        if(empty(rizhi2013x::where('id', $id)->update($data))){
+            return json(['code'=>1, 'msg'=>'数据验证成功, 但是无法添加到数据库中']);
+            exit;
+        }
+
+        return json(['code'=>0, 'msg'=>'ok']);
     }
 
     public function departmentBaosong($did){
