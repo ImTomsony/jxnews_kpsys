@@ -191,7 +191,7 @@ class DepartmentMember extends Base{
     public function deptKaoping1($did, $dateOffset = null){
         $memberList = rizhi2013_admin::where('department', $did)->order('id')->column('username, id', 'id');
         $dateList = [];
-        for ($i=0; $i < 7; $i++) {
+        for ($i=0; $i < 100; $i++) {
             $date = date('Y-m-d', strtotime('today - ' . $i . ' day'));
             foreach ($memberList as $key => $member) {
                 $kaopingList = rizhi2013x::where('time', $date)->where('mid', $member['id'])->select()->toArray();

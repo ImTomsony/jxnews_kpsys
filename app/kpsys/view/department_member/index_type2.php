@@ -160,6 +160,6 @@
             shade:0,
             area:['100%', '100%'],
         });
-        layer.title('部门考评-最近7天时间线', zIndex);
+        layer.title('部门考评-最近100天时间线', zIndex);
     }
 </script>
