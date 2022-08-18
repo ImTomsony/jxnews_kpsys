@@ -139,6 +139,9 @@ class DepartmentMember extends Base{
             return json(['code'=>0, 'msg'=>'ok']);
     }
 
+    /**
+     * 接受post过来的打分信息，并且update到数据库
+     */
     public function gradeMemberKaopingFormPost(){
          // 通过input助手函数和time()函数获取需要的数据
          $id = input('post.id');
@@ -167,7 +170,38 @@ class DepartmentMember extends Base{
         return json(['code'=>0, 'msg'=>'ok']);
     }
 
-    public function departmentBaosong($did){
+    /**
+     * 查看一个部门所有员工最近300条考评，用数组封装好为lay-table服务
+     */
+    public function deptKaoping($did, $date = null){
+        $memberList = rizhi2013_admin::where('department', $did)->order('id')->column('username, id', 'id');
+        foreach ($memberList as $key => &$member) {
+            $member['kaopingList'] = [];
+            $member['kaopingList'] = rizhi2013x::where('mid', $member['id'])->order('time', 'desc')->order('id','desc')->limit(100)->select()->toArray();
+        }
+        View::assign([
+            'memberList' => $memberList
+        ]);
+        return View::fetch();
+    }
+
+    /**
+     * 查看一个部门所有员工最近7天的考评，用数组封装好为时间线服务
+     */
+    public function deptKaoping1($did, $dateOffset = null){
+        $memberList = rizhi2013_admin::where('department', $did)->order('id')->column('username, id', 'id');
+        $dateList = [];
+        for ($i=0; $i < 7; $i++) {
+            $date = date('Y-m-d', strtotime('today - ' . $i . ' day'));
+            foreach ($memberList as $key => $member) {
+                $kaopingList = rizhi2013x::where('time', $date)->where('mid', $member['id'])->select()->toArray();
+                $dateList[$date][$member['username']]['id'] = $member['id'];
+                $dateList[$date][$member['username']]['kaoping'] = $kaopingList;
+            }
+        }
+        View::assign([
+            'dateList' => $dateList
+        ]);
         return View::fetch();
     }
 }

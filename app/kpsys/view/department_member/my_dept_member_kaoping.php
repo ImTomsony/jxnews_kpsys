@@ -76,7 +76,6 @@
                             </td>
                         {/if}
                     {/if}
-                    
                 </tr>
             {/volist}
         </tbody>

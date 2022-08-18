@@ -22,7 +22,7 @@
                         <!-- 自己所在的部门，如果权限是可以打分，就把标题改变成按钮，点进去就是打分部门的打分列表 -->
                         <fieldset class="layui-elem-field layui-field-title">
                             <legend>
-                                <button class="layui-btn layui-bg-blue" onclick="deptBaosong()">
+                                <button class="layui-btn layui-bg-blue" onclick="deptKaoping()">
                                     <i class="layui-icon layui-icon-search"></i>{$dept.deptname}
                                 </button>
                             </legend>
@@ -124,8 +124,8 @@
             type: 2,
             content: `/index.php/kpsys/DepartmentMember/memberKaoping/mid/${mid}`,
             maxmin: true,
+            area:['100%', '100%'],
         });
-        layer.full(zIndex);
     }
 
     /**
@@ -136,8 +136,8 @@
             type: 2,
             content: `/index.php/kpsys/KaopingManage/index`,
             maxmin: true,
+            area:['100%', '100%'],
         });
-        layer.full(zIndex);
     }
 
     function searchMyDeptMember(mid){
@@ -145,19 +145,21 @@
             type: 2,
             content: `/index.php/kpsys/DepartmentMember/MyDeptMemberKaoping/mid/${mid}`,
             maxmin: true,
+            area:['100%', '100%'],
         });
-        layer.full(zIndex);
     }
 
     /**
      * 部门按钮点击，开启部门打分报送页面
      */
-    function deptBaosong(){
+    function deptKaoping(){
         var zIndex = layer.open({
             type: 2,
-            content: '/index.php/kpsys/DepartmentMember/departmentBaosong/did/<?php echo $user['department'] ?>',
+            content: '/index.php/kpsys/DepartmentMember/deptKaoping1/did/{$user.department}',
             maxmin: true,
+            shade:0,
+            area:['100%', '100%'],
         });
-        layer.full(zIndex);
+        layer.title('部门考评-最近7天时间线', zIndex);
     }
 </script>
