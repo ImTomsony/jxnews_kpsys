@@ -159,7 +159,7 @@
             maxmin: true,
             shade:0,
             area:['100%', '100%'],
+            title: '部门考评-最近30天时间线',
         });
-        layer.title('部门考评-最近100天时间线', zIndex);
     }
 </script>

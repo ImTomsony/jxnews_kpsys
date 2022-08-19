@@ -41,13 +41,12 @@
                                         <ul>
                                             {volist name="member.kaoping" id="kaoping" key="kkk"}
                                                 <li>
-                                                    <h3 style="color:black">
+                                                    <h4 style="color:black">
                                                         <a style="color:black" href="javascript:;" onclick="grade('{$kaoping.id}')">{$kaoping.content}</a> 
                                                         {if $kaoping.tag == 1}<span class="layui-badge layui-bg-green">已报送</span> {else/}<span class="layui-badge">未报送</span> {/if}
-                                                        {if $kaoping.score == 0}<span class="layui-badge">未打分</span> {else/}<span class="layui-badge layui-bg-green">+{$kaoping.score}</span> {/if}
-                                                        {if $kaoping.reward != 0}<span class="layui-badge layui-bg-cyan"> {$kaoping.reward}</span> {/if} 
+                                                        {if $kaoping.total == 0}<span class="layui-badge">未打分</span> {else/}<span class="layui-badge layui-bg-green">{$kaoping.total}</span> {/if}
                                                         {if !empty($kaoping.note)}<span class="layui-badge-rim">{$kaoping.note}</span> {/if}
-                                                    </h3>
+                                                    </h4>
                                                     <p>{$kaoping.beizhu}</p>
                                                 </li>
                                             {/volist}
@@ -104,8 +103,8 @@
         layer.open({
             type:2,
             title:"考评",
-            offset: 'rt',
-            area:['70%', '100%'],
+            offset: 'rb',
+            area:['50%', '90%'],
             content: `/index.php/kpsys/DepartmentMember/gradeMemberKaoping/kaopingId/${kaopingId}`
         })
     }

@@ -162,8 +162,8 @@ class DepartmentMember extends Base{
         };
 
         // 更新考评
-        if(empty(rizhi2013x::where('id', $id)->update($data))){
-            return json(['code'=>1, 'msg'=>'数据验证成功, 但是无法添加到数据库中']);
+        if(empty(rizhi2013x::where('id', $id)->save($data))){
+            return json(['code'=>1, 'msg'=>'未改变数据']);
             exit;
         }
 
@@ -186,7 +186,7 @@ class DepartmentMember extends Base{
     }
 
     /**
-     * 查看一个部门所有员工最近7天的考评，用数组封装好为时间线服务
+     * 查看一个部门所有员工最近30天的考评，用数组封装好为时间线服务
      */
     public function deptKaoping1($did, $dateOffset = null){
         $memberList = rizhi2013_admin::where('department', $did)->order('id')->column('username, id', 'id');
