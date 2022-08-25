@@ -58,7 +58,7 @@ class KaopingManage extends Base{
                 exit;
             }
 
-            return json(['code'=>0, 'msg'=>'ok']);
+            return json(['code'=>0, 'msg'=>'ok', 'id'=>rizhi2013x::getLastinsID()]);
         }else
             return View::fetch();
     }
@@ -121,12 +121,41 @@ class KaopingManage extends Base{
         return json(['code'=>0, 'msg'=>'ok']);
     }
 
-    /**
-     * 查看某人的所有的考评的接口
-     * @return json 返回json格式的数据
-     */
-    // public function findAllKaoping($mid){
+    public function timelineAddKaoping(){
+        $data = [
+            'time' => input('post.time'),
+            'content' => remove_xss(trim(input('post.content'))),
+            'beizhu' => remove_xss(trim(input('post.beizhu'))),
+            'mid' => input('post.mid'),
+            'did' => input('post.did'),
+            'uname' => input('post.uname'),
+            'addtime' => time()
+        ];
 
-    //     return json($list);
-    // }
+        // 通过验证器验证数据是否合法
+        try{
+            validate(AddKaopingValidate::class)->check($data);
+        }catch(ValidateException $e){
+            // 验证失败就返回错误信息和错误代码
+            return json([ 'msg' => $e->getError(), 'code' => 1 ]);
+            exit;
+        };
+
+        // 添加考评
+        if(empty(rizhi2013x::insert($data))){
+            return json(['code'=>1, 'msg'=>'数据验证成功, 但是无法添加到数据库中']);
+            exit;
+        }
+
+        $id = rizhi2013x::getLastinsID();
+        View::assign([
+            'kaoping' => rizhi2013x::find($id)
+        ]);
+
+        return json([
+            'code'=>0, 
+            'msg'=>'ok', 
+            'HTMLtext' => View::fetch()
+        ]);
+    }
 }

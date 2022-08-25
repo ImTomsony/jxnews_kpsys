@@ -12,8 +12,8 @@
     </head>
 
     <body>
-        <h1>账户已登出, 即将转到登录界面</h1>
+		<li><h1>账户已登出, 即将转到登录界面</h1></li>
         <script>
-			setTimeout(()=>{top.location.href = 'index'}, 3000);
+			setTimeout(()=>{top.location.href = 'index'}, 2000);
         </script>
     </body>
