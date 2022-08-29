@@ -48,7 +48,6 @@
 					<div class="layui-tab layui-tab-brief" lay-filter="docDemoTabBrief">
 						<ul class="layui-tab-title">
 							<li class="layui-this">添加考评</li>
-							<li>编辑考评</li>
 						</ul>
 						<div class="layui-tab-content" style="height: 100px;">
 							<div class="layui-tab-item layui-show">
@@ -120,6 +119,16 @@
 														reloadTimeLine(data.field.time); // 局部刷新
 														myScrollTo(data.field.time); // 滚动
 														document.getElementById("addKaopingForm").reset(); // 重置
+														layui.use('laydate', function() {
+															var laydate = layui.laydate;
+															laydate.render({
+																elem: '#date',
+																min: -1,
+																max: 0,
+																value: new Date().toJSON().slice(0, 10),
+																isInitValue: true
+															});
+														})
 													},
 													error: (XMLHttpRequest, textStatus, errorThrown) => {
 														
@@ -132,7 +141,6 @@
 									</script>
 								</form>
 							</div>
-							<div class="layui-tab-item">请选择一条考评</div>
 						</div>
 					</div> 
 				</div>
@@ -148,7 +156,7 @@
 	var today = '<?php echo date('Y-m-d', strtotime('today'))?>';
 	var minDate = '<?php echo date('Y-m-d', strtotime('today - 299 days'))?>';
 	async function populates() {
-		while (num < 30) {
+		while (num < 100) {
 			// // document bottom
 			// let windowRelativeBottom = document.documentElement.getBoundingClientRect().bottom;
 
@@ -221,6 +229,9 @@
 		});
 	}
 
+	/**
+	 * 刷新你想刷新的某一天
+	 */
 	function reloadTimeLine(date){
 		layui.use('jquery', () => {
 			let $ = layui.jquery;

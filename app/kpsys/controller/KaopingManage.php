@@ -158,4 +158,42 @@ class KaopingManage extends Base{
             'HTMLtext' => View::fetch()
         ]);
     }
+
+    public function timelineEditKaoping(){
+        $data = [
+            'id' => input('post.id'),
+            'content' => remove_xss(trim(input('post.content'))),
+            'beizhu' => remove_xss(trim(input('post.beizhu'))),
+            'addtime' => time()
+        ];
+
+        // 通过验证器验证数据是否合法
+        try{
+            validate(UpdateKaopingValidate::class)->check($data);
+        }catch(ValidateException $e){
+            // 验证失败就返回错误信息和错误代码
+            return json([ 'code' => 1, 'msg' => $e->getError() ]);
+        };
+
+
+        // 添加考评
+        if(empty(rizhi2013x::update($data))){
+            return json(['code'=>1, 'msg'=>'数据验证成功, 但是无法添加到数据库中']);
+            exit;
+        }
+
+        return json(['code'=>0, 'msg'=>'ok']);
+    }
+
+    public function timelineDeleteKaoping(){
+            $id = input('post.id');
+
+          // 删除考评
+          if(empty(rizhi2013x::where('id', $id)->delete())){
+            return json(['code'=>1, 'msg'=>'数据验证成功, 但是无法添加到数据库中']);
+            exit;
+        }
+
+        return json(['code'=>0, 'msg'=>'ok']);
+    }
 }

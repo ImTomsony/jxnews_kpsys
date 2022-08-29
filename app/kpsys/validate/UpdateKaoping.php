@@ -7,7 +7,7 @@ class UpdateKaoping extends Validate{
     // 验证规则
     protected $rule = [
         'content|(content)工作内容' => 'require|max:1600',
-        'beizhu|(beizhu)补充内容' => 'require|max:1600',
+        'beizhu|(beizhu)补充内容' => 'max:1600',
     ];
 
     // 错误信息
