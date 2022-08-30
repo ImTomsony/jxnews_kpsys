@@ -2,15 +2,17 @@
 namespace app\kpsys\controller;
 
 use app\kpsys\model\rizhi2013x;
+use app\kpsys\model\rizhi2013baosong;
 use app\kpsys\validate\AddKaoping as AddKaopingValidate;
 use app\kpsys\validate\UpdateKaoping as UpdateKaopingValidate;
+use app\kpsys\validate\GradeKaoping as GradeKaopingValidate;
 use think\exception\ValidateException;
 use think\facade\Request;
 use think\facade\Session;
 use think\facade\View;
 
 /**
- * 本人考评的controller
+ * 管理考评的controller
  */
 class KaopingManage extends Base{
     /**
@@ -176,7 +178,7 @@ class KaopingManage extends Base{
         };
 
 
-        // 添加考评
+        // 修改考评
         if(empty(rizhi2013x::update($data))){
             return json(['code'=>1, 'msg'=>'数据验证成功, 但是无法添加到数据库中']);
             exit;
@@ -192,6 +194,77 @@ class KaopingManage extends Base{
           if(empty(rizhi2013x::where('id', $id)->delete())){
             return json(['code'=>1, 'msg'=>'数据验证成功, 但是无法添加到数据库中']);
             exit;
+        }
+
+        return json(['code'=>0, 'msg'=>'ok']);
+    }
+
+    public function timelineGradeKaoping(){
+        $data = [
+            'id' => input('post.id'),
+            'score' => input('post.score'),
+            'reward' => input('post.reward'),
+            'total' => input('post.score') + input('post.reward'),
+            'note' => remove_xss(trim(input('post.note')))
+        ];
+
+        // 通过验证器验证数据是否合法
+        try{
+            validate(GradeKaopingValidate::class)->check($data);
+        }catch(ValidateException $e){
+            // 验证失败就返回错误信息和错误代码
+            return json([ 'code' => 1, 'msg' => $e->getError() ]);
+        };
+
+        // 修改考评
+        if(empty(rizhi2013x::update($data))){
+            return json(['code'=>1, 'msg'=>'数据验证成功, 但是无法添加到数据库中']);
+            exit;
+        }
+
+        return json(['code'=>0, 'msg'=>'ok']);
+    }
+
+    /**
+     * 这个是一次添加一条考评
+     */
+    public function timelineBaosongKaoping(){
+        $data = input('post.');
+        $data['baosongTime'] = date('Y-m-d', strtotime('today'));
+        $kaoping = rizhi2013x::where('id', $data['id'])->find();
+
+        // 首先需要修改这条考评为已报送
+        $kaoping['tag'] = 1;
+        if(empty(rizhi2013x::update($kaoping->toArray()))){
+            return json(['code'=>1, 'msg'=>'考评无法修改tag属性, 报送终止']);
+        }
+
+        // 要确定是否是第一次添加这一天的考评，如果是，就insert，不是就update
+        if(empty($baosong = rizhi2013baosong::where('time', $data['baosongTime'])->where('uid', $kaoping['mid'])->find())){
+            // 第一次添加就需要整理好需要添加的数据
+            $baosong = [
+                'uname' => $kaoping['uname'],
+                'time' => $data['baosongTime'],
+                'department' => $kaoping['did'],
+                'total' => $kaoping['total'],
+                'score1' => $kaoping['score'],
+                'score2' => $kaoping['reward'],
+                'rzcount' => 1,
+                'uid' => $kaoping['mid']
+            ];
+            if(empty(rizhi2013baosong::insert($baosong))){
+                return json(['code'=>1, 'msg'=>'数据验证成功, 但是无法添加到数据库中']);
+            }
+        }else{
+            // 不是首次添加就需要其他的update方法
+            $baosong['total'] += $kaoping['total'];
+            $baosong['score1'] += $kaoping['score'];
+            $baosong['score2'] += $kaoping['reward'];
+            $baosong['rzcount'] += 1;
+
+            if(empty(rizhi2013baosong::update($baosong->toArray()))){
+                return json(['code'=>1, 'msg'=>'数据验证成功, 但是无法添加到数据库中']);
+            }
         }
 
         return json(['code'=>0, 'msg'=>'ok']);

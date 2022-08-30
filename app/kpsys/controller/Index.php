@@ -109,6 +109,28 @@ class Index extends Base{
                 break;
 
             case 2:
+                // 获取所有需要的数据，然后组装成需要assign给volist的数组
+                $memberList = rizhi2013_admin::where('department', $userDept_id)->field('id, username, department')->select();
+                $deptList = rizhi2013_dept::where('deptid', $userDept_id)->column('deptid, deptname', 'deptid');
+                $kaopingList = rizhi2013x::where('time', $date)->where('did', $userDept_id)->order('id', 'desc')->select();
+
+                $dateList['date'] = $date;
+                $dateList['dateKaopingCounts'] = 0;
+                $dateList['departments'] = $deptList;
+                foreach ($dateList['departments'] as $key => &$department) {
+                    $department['deptKaopingCounts'] = 0;
+                    $department['memberList'] = $memberList->where('department', $department['deptid'])->toArray();
+                    foreach($department['memberList'] as &$member){
+                        $member['kaopingList'] = $kaopingList->where('mid', $member['id'])->where('did', $member['department'])->toArray();
+                        $member['memberKaopingCounts'] = count($member['kaopingList']);
+                        $department['deptKaopingCounts'] += $member['memberKaopingCounts'];
+                    }
+                    $dateList['dateKaopingCounts'] += $department['deptKaopingCounts'];
+                }
+
+                View::assign([
+                    'dateList' => $dateList,
+                ]);
                 return json([
                     'template' => View::fetch('timeline_type2'),
                     'date' => $date
