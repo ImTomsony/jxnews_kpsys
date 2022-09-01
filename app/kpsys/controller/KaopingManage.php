@@ -269,4 +269,71 @@ class KaopingManage extends Base{
 
         return json(['code'=>0, 'msg'=>'ok']);
     }
+
+    function baosongMemberAllKaoping(){
+        $date = input('post.date');
+        $mid = input('post.mid');
+        $today = date('Y-m-d', strtotime('today'));
+
+        $kaopingList = rizhi2013x::where('time', $date)->where('mid', $mid)->where('tag', 0)->where('total', '<>', 0)->select()->toArray();
+        
+        //是否有需要报备的考评
+        if(empty($kaopingList)){
+            return json(['code'=>1, 'msg'=>'没有未报送且已经给过分的考评']);
+        }else{
+            // 是否为首次报送
+            if(empty($baosong = rizhi2013baosong::where('time', $today)->where('uid', $mid)->find())){
+                foreach($kaopingList as $key=>$kaoping){
+                    $kaoping['tag'] = 1;
+                    if(empty(rizhi2013x::update($kaoping))){
+                        return json(['code'=>1, 'msg'=>'考评无法修改tag属性, 报送终止']);
+                    }
+
+                    if($key == 0){
+                        $baosong = [
+                            'uname' => $kaoping['uname'],
+                            'time' => $today,
+                            'department' => $kaoping['did'],
+                            'total' => $kaoping['total'],
+                            'score1' => $kaoping['score'],
+                            'score2' => $kaoping['reward'],
+                            'rzcount' => 1,
+                            'uid' => $kaoping['mid']
+                        ];
+                        if(empty(rizhi2013baosong::insert($baosong))){
+                            return json(['code'=>1, 'msg'=>'数据验证成功, 但是无法添加到数据库中']);
+                        }
+                        continue;
+                    }
+
+                    $baosong['total'] += $kaoping['total'];
+                    $baosong['score1'] += $kaoping['score'];
+                    $baosong['score2'] += $kaoping['reward'];
+                    $baosong['rzcount'] += 1;
+
+                    if(empty(rizhi2013baosong::update($baosong))){
+                        return json(['code'=>1, 'msg'=>'考评id: ' + $kaoping['id'] + '数据验证成功, 但是无法添加到数据库中']);
+                    }
+                }
+            }else{
+                foreach($kaopingList as $key=>$kaoping){
+                    $kaoping['tag'] = 1;
+                    if(empty(rizhi2013x::update($kaoping))){
+                        return json(['code'=>1, 'msg'=>'考评无法修改tag属性, 报送终止']);
+                    }
+
+                    $baosong['total'] += $kaoping['total'];
+                    $baosong['score1'] += $kaoping['score'];
+                    $baosong['score2'] += $kaoping['reward'];
+                    $baosong['rzcount'] += 1;
+                    
+                    if(empty(rizhi2013baosong::update($baosong->toArray()))){
+                        return json(['code'=>1, 'msg'=>'考评id: ' + $kaoping['id'] + '数据验证成功, 但是无法添加到数据库中']);
+                    }
+                }
+            }
+        }
+
+        return json(['code'=>0, 'msg'=>'ok']);
+    }
 }

@@ -25,7 +25,43 @@
                     {if $department.deptKaopingCounts != 0}
                         <li>
                             <h2>
-                                <a style="color:black" href="javascript:;">{$department.deptname}</a>
+                                <a style="color:black" href="javascript:;" id="{$dateList.date . '-did' . $department.deptid}">{$department.deptname}</a>
+                                <script>
+                                    layui.use(['dropdown'], ()=>{
+                                        var dropdown = layui.dropdown;
+
+                                        dropdown.render({
+                                            elem: "#{$dateList.date}-did{$department.deptid}",
+                                            trigger: 'hover',
+                                            delay: 0,
+                                            data: [
+                                                {title: '组成员', type: 'group', child: [
+                                                    <?php 
+                                                        foreach($department['memberList'] as $kkk => $vvv){ 
+                                                            echo '{title:\'' . $vvv['username'] . '\', child: [{title: \'添加考评\', 
+                                                                function: () => {
+                                                                    layer.open({
+                                                                        type: 2,
+                                                                        content: \'/index.php/kpsys/DepartmentMember/addMemberKaopingFromTimeline/mid/'.$vvv['id'].'/date/'.$dateList['date'].'\',
+                                                                        area: [\'750px\', \'600px\'],
+                                                                        shadeClose: true,
+                                                                        end: () => {
+                                                                            reloadTimeLine(\''.$dateList['date'].'\');
+                                                                        }
+                                                                    })
+                                                                }
+                                                            }]},
+                                                            ';
+                                                        }
+                                                    ?>
+                                                ]},
+                                            ],
+                                            click: (data) => {
+                                                data.function();
+                                            }
+                                        })
+                                    })
+                                </script>
                                 <span class="layui-badge-rim">{$department.deptKaopingCounts}条考评</span>
                             </h2>
                             <ul>
@@ -34,6 +70,64 @@
                                         <li>
                                             <h3>
                                                 <a style="color:black" href="javascript:;" id="{$dateList.date . '-' . $member.id}">{$member.username}</a>
+                                                <script>
+                                                    layui.use(['dropdown', 'layer', 'jquery'], () => {
+                                                        let dropdown = layui.dropdown;
+                                                        let $ = layui.jquery;
+                                                        let layer = layui.layer;
+
+                                                        dropdown.render({
+                                                            elem: '#{$dateList.date . '-' . $member.id}',
+                                                            trigger: 'hover',
+                                                            delay: 0,
+                                                            data: [
+                                                                {title: '添加考评', function: () => {
+                                                                    layer.open({
+                                                                        type: 2,
+                                                                        title: '{$member.username}的添加考评',
+                                                                        content: '/index.php/kpsys/DepartmentMember/addMemberKaopingFromTimeline/mid/{$member.id}/date/{$dateList.date}',
+                                                                        area: ['750px', '600px'],
+                                                                        shadeClose: true,
+                                                                        end: () => {
+                                                                            reloadTimeLine('{$dateList.date}');
+                                                                        }
+                                                                    })
+                                                                }},
+                                                                {title: '报送所有已打分', function: () => {
+                                                                    $.ajax({
+                                                                        url: '/index.php/kpsys/KaopingManage/baosongMemberAllKaoping',
+                                                                        type: 'post',
+                                                                        async: true,
+                                                                        contentType: 'json',
+                                                                        data: JSON.stringify({
+                                                                            date: '{$dateList.date}',
+                                                                            mid: '{$member.id}',
+                                                                        }),
+                                                                        dataType: 'json',
+                                                                        success: (data, textStatus) => {
+                                                                            switch (data.code) {
+                                                                                case 0:
+                                                                                    layer.msg(data.msg, {'icon':1})
+                                                                                    reloadTimeLine('{$dateList.date}');
+                                                                                    break;
+
+                                                                                default:
+                                                                                    layer.msg(data.msg, {'icon':2})
+                                                                                    break;
+                                                                            }
+                                                                        },
+                                                                        error: (XMLHttpRequest, textStatus, errorThrown) => {
+
+                                                                        }
+                                                                    })
+                                                                }}
+                                                            ],
+                                                            click: (data) => {
+                                                                data.function();
+                                                            }
+                                                        })
+                                                    })
+                                                </script>
                                                 <span class="layui-badge-rim">{$member.memberKaopingCounts}条考评</span>
                                             </h3>
                                             <ul id="{$dateList.date . '-' . $member.id . '-' . 'ul'}">

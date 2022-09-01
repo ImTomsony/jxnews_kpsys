@@ -66,7 +66,7 @@
 											var laydate = layui.laydate;
 											laydate.render({
 												elem: '#date',
-												min: -1,
+												min: <?php if($user['dfdays']){echo -$user['dfdays'] + 1;}else{echo -1;};  ?>,
 												max: 0,
 												value: new Date().toJSON().slice(0, 10),
 												isInitValue: true

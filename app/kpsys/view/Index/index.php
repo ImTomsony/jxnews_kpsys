@@ -64,6 +64,11 @@
 							</a>
 							<dl class="layui-nav-child">
 								<dd data-name="" data-jump="/">
+									<a href="javascript:;" onclick="menuFire('/index.php/kpsys/Index/welcome')">
+										<i class="layui-icon layui-icons layui-icon-form"></i>时间线--功能集合
+									</a>
+								</dd>
+								<dd data-name="" data-jump="/">
 									<a href="javascript:;" onclick="menuFire('/index.php/kpsys/KaopingManage')">
 										<i class="layui-icon layui-icons layui-icon-form"></i>本人考评
 									</a>

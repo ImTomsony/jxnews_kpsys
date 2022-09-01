@@ -94,6 +94,18 @@ class DepartmentMember extends Base{
     }
 
     /**
+     * 展示打分者添加部门员工考评的界面
+     */
+    public function addMemberKaopingFromTimeline($mid, $date){
+        $member = rizhi2013_admin::where('id', $mid)->find();
+        View::assign([
+            'member' => $member,
+            'date' => $date
+        ]);
+        return View::fetch();
+    }
+
+    /**
      * 展示给已有考评打分的界面
      */
     public function gradeMemberKaoping($kaopingId){
