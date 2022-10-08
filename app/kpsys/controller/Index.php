@@ -42,6 +42,8 @@ class Index extends Base{
                 break;
 
             case 8:
+                $departmentList = rizhi2013_dept::select()->toArray();
+                View::assign(['departmentList' => $departmentList]);
                 return View::fetch('welcome_type8');
                 break;
             
@@ -145,6 +147,10 @@ class Index extends Base{
                 break;
 
             case 8:
+                $deptId = input('post.department');
+                View::assign([
+                    'dateList' => $dateList = dateListCreator($date, $deptId)
+                ]);
                 return json([
                     'template' => View::fetch('timeline_type8'),
                     'date' => $date
@@ -155,5 +161,26 @@ class Index extends Base{
                 return View::fetch('');
                 break;
         }
+    }
+}
+
+function dateListCreator($date, $deptId){
+    // 获取所有需要的数据，然后组装成需要assign给volist的数组
+    $deptList = rizhi2013_dept::where('deptid', $deptId)->column('deptid, deptname', 'deptid');
+    $memberList = rizhi2013_admin::where('department', $deptId)->field('id, username, department')->select();
+    $kaopingList = rizhi2013x::where('time', $date)->where('did', $deptId)->order('id', 'desc')->select();
+
+    $dateList['date'] = $date;
+    $dateList['dateKaopingCounts'] = 0;
+    $dateList['departments'] = $deptList;
+    foreach ($dateList['departments'] as $key => &$department) {
+        $department['deptKaopingCounts'] = 0;
+        $department['memberList'] = $memberList->where('department', $department['deptid'])->toArray();
+        foreach($department['memberList'] as &$member){
+            $member['kaopingList'] = $kaopingList->where('mid', $member['id'])->where('did', $member['department'])->toArray();
+            $member['memberKaopingCounts'] = count($member['kaopingList']);
+            $department['deptKaopingCounts'] += $member['memberKaopingCounts'];
+        }
+        $dateList['dateKaopingCounts'] += $department['deptKaopingCounts'];
     }
 }
