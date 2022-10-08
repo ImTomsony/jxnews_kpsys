@@ -113,6 +113,7 @@
             height: 340,
             limit: 100000,
             even: true,
+            escape: false
 		});
 	})
 

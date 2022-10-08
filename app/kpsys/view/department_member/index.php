@@ -25,7 +25,12 @@
                         </fieldset>
 
                         <!-- 然后把部门下的所有员工打印出来 -->
-                        <table class="layui-table" lay-size="sm" lay-filter="demo">
+                        <table class="layui-table" lay-size="sm" lay-filter="demo" lay-data="{
+                            height: 340,
+                            limit: 100000,
+                            even: true,
+                            escape: false
+                        }">
                             <thead>
                                 <tr>
                                     <th lay-data="{field:'k', sort:true, width:70, align:'center'}">序号</th>
@@ -39,7 +44,6 @@
                                         <td>{$kk}</td>
                                         <td>{$member.username}</td>
                                         <td>
-                                            <!-- 用户自己的查询按钮不一样 -->
                                             {if $member.id == $user.id}
                                                 <button class="layui-btn layui-btn-xs layui-bg-red" onclick="searchMyself()">
                                                     <i class="layui-icon layui-icon-search "></i>查
@@ -55,38 +59,43 @@
                             </tbody>
                         </table>
                     </div>
-                {/if}
+                {else/}
+                    <div class="layui-col-xs1" style="width: 235px; height: 410px; margin: 5px;">
+                        <!-- 部门 -->
+                        <fieldset class="layui-elem-field layui-field-title">
+                            <legend>{$dept.deptname}</legend>
+                        </fieldset>
 
-                <div class="layui-col-xs1" style="width: 235px; height: 410px; margin: 5px;">
-                    <!-- 部门 -->
-                    <fieldset class="layui-elem-field layui-field-title">
-                        <legend>{$dept.deptname}</legend>
-                    </fieldset>
-
-                    <!-- 然后把部门下的所有员工打印出来 -->
-                    <table class="layui-table" lay-size="sm" lay-filter="demo">
-                        <thead>
-                            <tr>
-                                <th lay-data="{field:'k', sort:true, width:70, align:'center'}">序号</th>
-                                <th lay-data="{field:'time', sort:true, minWidth:70, align:'center'}">姓名</th>
-                                <th lay-data="{field:'operation', sort:true, width:70, align:'center'}">操作</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {volist name='$dept.memberList' id='member' key='kk'}
+                        <!-- 然后把部门下的所有员工打印出来 -->
+                        <table class="layui-table" lay-size="sm" lay-filter="demo" lay-data="{
+                            height: 340,
+                            limit: 100000,
+                            even: true,
+                            escape: false
+                        }">
+                            <thead>
                                 <tr>
-                                    <td>{$kk}</td>
-                                    <td>{$member.username}</td>
-                                    <td>
-                                        <button class="layui-btn layui-btn-xs layui-bg-cyan" onclick="search('{$member.id}')">
-                                            <i class="layui-icon layui-icon-search "></i>查
-                                        </button>
-                                    </td>
+                                    <th lay-data="{field:'k', sort:true, width:70, align:'center'}">序号</th>
+                                    <th lay-data="{field:'time', sort:true, minWidth:70, align:'center'}">姓名</th>
+                                    <th lay-data="{field:'operation', sort:true, width:70, align:'center'}">操作</th>
                                 </tr>
-                            {/volist}
-                        </tbody>
-                    </table>
-                </div>
+                            </thead>
+                            <tbody>
+                                {volist name='$dept.memberList' id='member' key='kk'}
+                                    <tr>
+                                        <td>{$kk}</td>
+                                        <td>{$member.username}</td>
+                                        <td>
+                                            <button class="layui-btn layui-btn-xs layui-bg-cyan" onclick="search('{$member.id}')">
+                                                <i class="layui-icon layui-icon-search "></i>查
+                                            </button>
+                                        </td>
+                                    </tr>
+                                {/volist}
+                            </tbody>
+                        </table>
+                    </div>
+                {/if}
             {/volist}
         </div>
     </div>
@@ -103,14 +112,15 @@
 	 * 这个是layui table表格静态转换, 开启头部工具栏
 	 * 详情请看文档https://www.layui.site/doc/modules/table.html#autoRender
 	 */
-	layui.use('table', function(){
-		var table = layui.table;
-		table.init('demo', {
-            height: 340,
-            limit: 100000,
-            even: true,
-		});
-	})
+	// layui.use('table', function(){
+	// 	var table = layui.table;
+	// 	table.init('demo', {
+    //         height: 340,
+    //         limit: 100000,
+    //         even: true,
+    //         escape: false
+	// 	});
+	// })
 
     /**
      * 员工查询按钮点击事件

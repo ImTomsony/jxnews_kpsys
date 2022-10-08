@@ -33,7 +33,14 @@
 				</button>
 			</div>
 		</script>
-		<table class="layui-table" lay-size="sm" lay-filter="demo">
+		<table class="layui-table" lay-size="sm" lay-filter="demo" lay-data="{
+			limit: 20,
+			limits: [10,20,50,100,500,1000,100000000],
+			page: true,
+			toolbar: '#toolbar',
+			even: true,
+			escape: false
+		}">
 			<thead>
 				<tr>
 					<th lay-data="{field:'k', sort:true, width:69, align:'center'}">序号</th>
@@ -43,7 +50,7 @@
 					<th lay-data="{field:'score', sort:true, width:69, align:'center'}">分值</th>
 					<th lay-data="{field:'reward', sort:true, width:69, align:'center'}">奖惩</th>
 					<th lay-data="{field:'reward_note', sort:true, width:150}">打分备注</th>
-					<th lay-data="{field:'operation', sort:true, width:130, align:'center'}">操作</th>
+					<th lay-data="{field:'operation', sort:true, width:130, align:'left'}">操作</th>
 				</tr>
 			</thead>
 			<tbody>
@@ -57,14 +64,18 @@
 						<td>{$vo.reward}</td>
 						<td>{$vo.note}</td>
 						{if $vo.tag == 0}
-						<td>
-							<button type="button" class="layui-btn layui-btn-xs layui-btn-normal" onclick="update('{$vo.id}')">
-								<i class="layui-icon layui-icon-edit"></i>改
-							</button>
-							<button type="button" class="layui-btn layui-btn-xs layui-btn-danger" onclick="del('{$vo.id}')">
-								<i class="layui-icon layui-icon-delete"></i>删
-							</button>
-						</td>
+							<td>
+								<button type="button" class="layui-btn layui-btn-xs layui-btn-normal" onclick="update('{$vo.id}')">
+									<i class="layui-icon layui-icon-edit"></i>改
+								</button>
+								<button type="button" class="layui-btn layui-btn-xs layui-btn-danger" onclick="del('{$vo.id}')">
+									<i class="layui-icon layui-icon-delete"></i>删
+								</button>
+							</td>
+						{else/}
+							<td>
+								<span class="layui-badge layui-bg-green">已报送</span>
+							</td>
 						{/if}
 					</tr>
 				{/volist}
@@ -82,16 +93,16 @@
 	 * 这个是layui table表格静态转换, 开启头部工具栏
 	 * 详情请看文档https://www.layui.site/doc/modules/table.html#autoRender
 	 */
-	layui.use('table', function(){
-		var table = layui.table;
-		table.init('demo', {
-			limit: 20,
-			limits: [10,20,50,100,500,1000,100000000],
-			page: true,
-			toolbar: '#toolbar',
-			even: true,
-		});
-	})
+	// layui.use('table', function(){
+	// 	var table = layui.table;
+	// 	table.init('demo', {
+	// 		limit: 20,
+	// 		limits: [10,20,50,100,500,1000,100000000],
+	// 		page: true,
+	// 		toolbar: '#toolbar',
+	// 		even: true,
+	// 	});
+	// })
 
 	/**
 	 * 增删改查 之 增
