@@ -22,7 +22,7 @@
 			<div class="layui-col-xs5">
 				<div class="layui-pane" style="position: fixed">
 					<fieldset class="layui-elem-field layui-field-title">
-						<legend>查看考评</legend>
+						<legend>查看最近100天考评</legend>
 					</fieldset>
 					<div class="layui-form layui-form-pane">
 						<div class="layui-form-item">
@@ -35,7 +35,7 @@
 							<div class="layui-inline">
 								<label class="layui-form-label">部门</label>
 								<div class="layui-input-inline">
-									<select id="departmentSelection" onchange="deptSelectionChange(this)">
+									<select lay-filter="departmentSelection">
 										<option value="0" selected>所有部门</option>
                                         {volist name="$departmentList" id="department"}
                                             <option value="{$department.deptid}">{$department.deptname}</option>
@@ -43,6 +43,39 @@
 									</select>
 								</div>
 							</div>
+							<script>
+								/**
+								 * 查看考评下拉框选择
+								 */
+								 layui.use(['form', 'jquery'], () => {
+									let form = layui.form;
+									let $ = layui.jquery;
+
+									form.on('select(departmentSelection)', data => {
+										let container = document.querySelectorAll("li.department"); // 选择所有的部门
+										
+										// 根据所选的部门做判断，0 代表所有部门
+										switch (data.value) {
+											case '0':
+												container.forEach(
+													li => {
+														li.style.display = null;
+													}
+												)
+												break;
+										
+											default:
+												container.forEach(
+													li => {
+														let regExp = new RegExp('^\\d\\d\\d\\d-\\d\\d-\\d\\d-did' + data.value + '-li$');
+														regExp.test(li.id) ? li.style.display = null : li.style.display = 'none';
+													}
+												)
+												break;
+										}
+									});
+								 })
+							</script>
 						</div>
 					</div>
 					<fieldset class="layui-elem-field layui-field-title" style="margin-top: 50px;">
@@ -55,6 +88,58 @@
 						<div class="layui-tab-content" style="height: 100px;">
 							<div class="layui-tab-item layui-show">
 								<form class="layui-form" id="addKaopingForm">
+
+									<!-- 两级联动框 -->
+									<div class="layui-form-item">
+										<label class="layui-form-label">部门人员</label>
+										<div class="layui-input-inline">
+											<select name="did" id="department" lay-filter="department" lay-verify="required">
+												<option value="">请选择部门</option>
+												{volist name="$departmentList" id="department"}
+													<option value="{$department.deptid}">{$department.deptname}</option>
+												{/volist}
+											</select>
+										</div>
+										<div class="layui-input-inline">
+											<select name="mid" id="user" lay-filter="user" lay-verify="required">
+												<option value="">请选择人员</option>
+											</select>
+										</div>
+									</div>
+									<input type="hidden" name="uname" id="uname" value="">
+									<script>
+										//获取数据，赋值给js对象
+										let departmentList = JSON.parse('<?php echo json_encode($departmentList) ?>');
+
+										// layui选项select事件
+										layui.use(['form', 'jquery'], () => {
+											let form = layui.form;
+											let $ = layui.jquery;
+											let tempMemberList; // 保存好需要为uname用到的姓名
+
+											form.on('select(department)', data => {
+												let userOptions = document.getElementById('user');
+												tempMemberList = departmentList[data.value]['memberList'];
+
+												userOptions.innerHTML = '<option value="">请选择人员</option>'
+												departmentList[data.value]['memberList'].forEach(member => {
+													let option = document.createElement('option');
+													option.value = member.id;
+													option.innerHTML = member.username;
+													userOptions.appendChild(option);
+												});
+
+												form.render('select');
+											});
+
+											form.on('select(user)', data => {
+												let uname = document.getElementById('uname');
+												uname.value = tempMemberList.find(member => member.id == data.value).username;
+												console.log(uname);
+											})
+										})
+									</script>
+
 									<div class="layui-form-item">
 										<div class="layui-inline">
 											<label class="layui-form-label">日期</label>
@@ -88,10 +173,6 @@
 											<textarea placeholder="请输入内容" class="layui-textarea" name="beizhu"></textarea>
 										</div>
 									</div>
-
-									<input type="hidden" name="mid" value="{$user.id}">
-									<input type="hidden" name="did" value="{$user.department}">
-									<input type="hidden" name="uname" value="{$user.username}">
 
 									<div class="layui-form-item">
 										<div class="layui-input-block">
@@ -258,8 +339,4 @@
 			})
 		})
 	}
-
-    function deptSelectionChange(selectedDept){
-        console.log(selectedDept.value);
-    }
 </script>
